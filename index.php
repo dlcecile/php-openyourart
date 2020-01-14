@@ -1,49 +1,5 @@
 <?php
-//Initialisation des variables
-$login = $password = $passwordConfirmation = $mail =  '';
-//Regex si nécessaire
-$regexlogin = "/^[A-Za-zéÉ][A-Za-záàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÇÈÉÊÀ0123456789\^\$\\\|\{\}\[\]\(\)\?\#\!\+\*\.&_~`:;%µ¨£@¤\"'-]{3,9}$/";
-$regexpassword = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).{8}$/";
-$regexmail = "/^[\wáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÇÈÉÊÀ.-]+@([\wáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÇÈÉÊÀ.-]{3,})\.([a-z]{2,3})$/";
-//tableau d'erreur
-$errors = [];
-//Initialisation du bouton  qui soumet du formulaire
-$formSubmitted = false;
-// If the server register a post request
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $formSubmitted = true;
-    // Contrôle que les informations saisies soit bonnes et que si elles sont fausses un message d'erreurs s'inscrit
-    //Contrôle du login
-    $login = trim(filter_input(INPUT_POST, 'login', FILTER_SANITIZE_STRING));
-    if (empty($login)) {
-        $errors['login'] = 'Veuillez renseigner un pseudo.';
-    } elseif (!preg_match($regexlogin, $login)) {
-        $errors['login'] = 'Votre pseudonyme doit contenir entre 4 et 10 caractères maximum et il doit commencer par un lettre';
-    }
-    //Contrôle du mot de passe
-      $password = trim(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING));
-    if (empty($password)) {
-        $errors['password'] = 'Veuillez renseigner un pseudo.';
-    } elseif (!preg_match($regexpassword, $password)) {
-        $errors['password'] = 'Votre mot de passe doit contenir 8 caractères comprenant 1 masjuscule, 1 minuscule, 1 caractère spécial et 1 chiffre';
-    }
-    //Contrôle de la confirmation du mot de passe
-        $passwordConfirmation = trim(filter_input(INPUT_POST, 'passwordConfirmation', FILTER_SANITIZE_STRING));
-    if (empty($passwordConfirmation)) {
-        $errors['passwordConfirmation'] = 'Veuillez renseigner un pseudo.';
-    } elseif (!preg_match($regexpassword, $passwordConfirmation)) {
-        $errors['passwordConfirmation'] = 'Votre mot de passe doit contenir 8 caractères comprenant 1 masjuscule, 1 minuscule, 1 caractère spécial et 1 chiffre';
-    }
-    //Contrôle de l'adresse email
-  $mail = trim(htmlspecialchars($_POST['mail']));
-    if (empty($mail)) {
-        $errors['mail'] = 'Veuillez renseigner votre email';
-    } elseif (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
-        $errors['mail'] = 'L\' email  n\'est pas valide!';
-    }elseif (!preg_match($regexmail, $mail)) {
-        $errors['mail'] = 'Votre adresse email doit contenir un format valide';
-    }
-}
+include 'validation-form.php';
 ?>
 <!doctype html>
 <html lang="fr">
@@ -55,27 +11,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <title>Formulaire</title>
         <!-- Bootstrap -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel ="stylesheet" href="assets/css/style.css">
     </head>
     <body>
+        <h1>OpenYourArt</h1>
         <form method="POST" action="index.php" class="formParts" novalidate>
     <div class="form-group row">
            <label for="login" class="col-form-label col-2">Pseudo</label>
-        <input id="login" name="login" type="text" value="<?= $login ?>" class="form-control col-8" placeholder="Pseudonyme">
+        <input id="login" name="login" type="text" value="<?= $login ?>" class="form-control col-5" placeholder="Pseudonyme">
           <span class="text-danger"><?= ($errors['login']) ?? '' ?></span>
+          <span class="text-success"><?= ($confirmed['login']) ?? '' ?></span>
     </div>
     <div class="form-group row">
         <label for="password" class="col-form-label col-2">Mot de passe</label>
-        <input id="password" name="password" type="password" value="<?= $password ?>" class="form-control col-8" placeholder="Saisir un mot de passe comprenant 8 caractères">
+        <input id="password" name="password" type="password" value="<?= $password ?>" class="form-control col-5" placeholder="Saisir un mot de passe comprenant 8 caractères">
     <span class="text-danger"><?= ($errors['password']) ?? '' ?></span>
     </div>
     <div class="form-group row">
         <label for="passwordConfirmation" class="col-form-label col-2">Confirmation de mot de passe :</label>
-        <input id="passwordConfirmation" name="passwordConfirmation" type="text" value="<?= $passwordConfirmation ?>"  class="form-control col-8" placeholder="Saisir de nouveau le mot de passe">
+        <input id="passwordConfirmation" name="passwordConfirmation" type="text" value="<?= $passwordConfirmation ?>"  class="form-control col-5" placeholder="Saisir de nouveau le mot de passe">
           <span class="text-danger"><?= ($errors['passwordConfirmation']) ?? '' ?></span>
+          <span class="text-warning"><?= ($notUniform['passwordConfirmation']) ?? '' ?></span>
+          <span class="text-success"><?= ($confirmed['passwordConfirmation']) ?? '' ?></span>
     </div>
     <div class="form-group row">
         <label for="mail" class="col-form-label col-2">Adresse mail:</label>
-        <input id="mail" name="mail" type="text" value="<?= $mail ?>"  class="form-control col-8" placeholder="maxmario@gmail.com">
+        <input id="mail" name="mail" type="text" value="<?= $mail ?>"  class="form-control col-5" placeholder="maxmario@gmail.com">
         <span class="text-danger"><?= ($errors['mail']) ?? '' ?></span>
     </div>
     <div class="form-group row justify-content-center">
