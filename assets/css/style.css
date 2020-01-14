@@ -1,3 +1,15 @@
-h1{
-  color: purple;
+.connexion, .inscription{
+    background-color: #c19e67;
+    color: #f0f4fa;
+    background: linear-gradient( 60deg, #f3e2c7,#c19e67);
+     width: 30vh;
+     height: 13vh;  
+     font-size:2vh;
+}
+.userArea{
+    justify-content: center;
+}
+#tabsInscription, #tabsConnexion{
+    border:1px solid black;
+    width: 35vh;
 }
